@@ -53,16 +53,18 @@ public class SQLiteRequest implements IRequest {
     public void executeUpdate() {
         SQLiteStatement sqLiteStatement = this.db.compileStatement(this.query.getSafeSql());
 
-        for (int i = 0; i < this.getQuery().getParameters().size(); i++) {
-            bind(sqLiteStatement, i + 1, this.query.getParameters().get(i));
-        }
+        while (this.query.nextBatch()) {
+            for (int i = 0; i < this.getQuery().getParameters().size(); i++) {
+                bind(sqLiteStatement, i + 1, this.query.getParameters().get(i));
+            }
 
-        Log.i(TAG, "Query : [" + this.query.getSafeSql() + "]");
-        Log.i(TAG, "Query parameters : " + this.query.getParameters());
+            Log.i(TAG, "Query : [" + this.query.getSafeSql() + "]");
+            Log.i(TAG, "Query parameters : " + this.query.getParameters());
 
-        Long inserted = sqLiteStatement.executeInsert();
-        if(inserted != -1) {
-            this.query.getGeneratedIds().add(inserted);
+            Long inserted = sqLiteStatement.executeInsert();
+            if(inserted != -1) {
+                this.query.getGeneratedIds().add(inserted);
+            }
         }
     }
 
