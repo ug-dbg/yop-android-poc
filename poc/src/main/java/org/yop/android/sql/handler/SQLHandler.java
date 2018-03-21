@@ -10,7 +10,7 @@ import org.yop.orm.gen.Table;
 import org.yop.orm.sql.Constants;
 import org.yop.orm.sql.Executor;
 import org.yop.orm.sql.Parameters;
-import org.yop.orm.sql.Query;
+import org.yop.orm.sql.SimpleQuery;
 import org.yop.orm.util.dialect.SQLite;
 
 import java.util.Collection;
@@ -53,7 +53,7 @@ public class SQLHandler extends SQLiteOpenHelper {
         for (Table table : tables) {
             try {
                 Log.i(TAG,"Executing SQL script for table [" + table.qualifiedName() + "]");
-                Executor.executeQuery(sqLiteConnection, new Query(table.toSQL(), new Parameters()));
+                Executor.executeQuery(sqLiteConnection, new SimpleQuery(table.toSQL(), new Parameters()));
             } catch (RuntimeException e) {
                 Log.w(TAG,"Error executing script line [" + table.toSQL() + "]", e);
             }
