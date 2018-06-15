@@ -34,7 +34,7 @@ dependencies {
 
     // Yop dependency
     // Exclude javassist which does not work at all on android (I guess)
-    compile ('org.y-op:yop:0.3.0') {
+    compile ('org.y-op:yop:0.4') {
         exclude group: 'org.javassist', module: 'javassist'
     }
 
