@@ -29,9 +29,10 @@ public class SQLiteCursor implements IResultCursor {
         return false;
     }
 
+    // Android : cursor column index seems to be 0-based.
     @Override
     public String getColumnName(int i) {
-        return this.cursor.getColumnName(i);
+        return this.cursor.getColumnName(i - 1);
     }
 
     @Override

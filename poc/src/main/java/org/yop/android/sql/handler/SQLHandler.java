@@ -7,12 +7,10 @@ import android.util.Log;
 
 import org.yop.android.sql.adapter.android.SQLiteConnection;
 import org.yop.orm.gen.Table;
-import org.yop.orm.sql.Constants;
+import org.yop.orm.sql.Config;
 import org.yop.orm.sql.Executor;
-import org.yop.orm.sql.Parameters;
 import org.yop.orm.sql.Query;
 import org.yop.orm.sql.SimpleQuery;
-import org.yop.orm.util.dialect.SQLite;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,10 +26,6 @@ public class SQLHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "tracker";
     private final Set<Class> yopables = new HashSet<>();
 
-    static {
-        System.setProperty(Constants.SHOW_SQL_PROPERTY, "true");
-    }
-
     public SQLHandler(Context context, Collection<Class> yopables) {
         super(context, DB_NAME, null, 1);
 
@@ -45,19 +39,18 @@ public class SQLHandler extends SQLiteOpenHelper {
     @Override
     @SuppressWarnings("unchecked")
     public void onCreate(SQLiteDatabase db) {
-        SQLiteConnection sqLiteConnection = new SQLiteConnection(db);
+        SQLiteConnection connection = new SQLiteConnection(db);
+        Config config = connection.config();
         Log.i(TAG, "Database [" + db.getPath() + "] created !");
 
         Set<Table> tables = new HashSet<>();
-        this.yopables.forEach(yopable -> tables.addAll(Table.findTablesFor(yopable, SQLite.INSTANCE)));
+        this.yopables.forEach(yopable -> tables.addAll(Table.findTablesFor(yopable, config)));
 
         for (Table table : tables) {
             try {
+                SimpleQuery query = new SimpleQuery(table.toSQL(), Query.Type.INSERT, config);
                 Log.i(TAG,"Executing SQL script for table [" + table.qualifiedName() + "]");
-                Executor.executeQuery(
-                    sqLiteConnection,
-                    new SimpleQuery(table.toSQL(), Query.Type.UNKNOWN, new Parameters())
-                );
+                Executor.executeQuery(connection, query);
             } catch (RuntimeException e) {
                 Log.w(TAG,"Error executing script line [" + table.toSQL() + "]", e);
             }
