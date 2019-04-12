@@ -15,10 +15,10 @@ import org.yop.android.sql.adapter.android.SQLiteConnection;
 import org.yop.android.sql.handler.SQLHandler;
 import org.yop.orm.evaluation.Operator;
 import org.yop.orm.exception.YopRuntimeException;
-import org.yop.orm.query.JoinSet;
-import org.yop.orm.query.Select;
-import org.yop.orm.query.Upsert;
-import org.yop.orm.query.Where;
+import org.yop.orm.query.sql.SQLJoin;
+import org.yop.orm.query.sql.Select;
+import org.yop.orm.query.sql.Upsert;
+import org.yop.orm.query.sql.Where;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
             samples = Select
                 .from(Sample.class)
-                .join(JoinSet
-                    .to(Sample::getRelated)
+                .join(SQLJoin
+                    .toN(Sample::getRelated)
                     // It seems like using 'float' fields instead of 'double' does not work for this
                     .where(Where.compare(RelatedToSample::getRate, Operator.EQ, 1.1))
                 )

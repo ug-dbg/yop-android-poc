@@ -33,9 +33,14 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
 
     // Yop dependency
-    // Exclude javassist which does not work at all on android (I guess)
-    compile ('org.y-op:yop:0.9.0-SNAPSHOT') {
+    compile ('org.y-op:orm:0.9.0') {
+        // Exclude javassist which does not work at all on android (I guess)
         exclude group: 'org.javassist', module: 'javassist'
+
+        // Android brings its own xmlpullparser and yop relies on XStream for XML serialization.
+        // An exclude is required to avoid this exception :
+        // "Caused by: [...] Multiple dex files define Lorg/xmlpull/v1/XmlPullParser"
+        exclude group: 'xmlpull', module: 'xmlpull'
     }
 
     testImplementation 'junit:junit:4.12'
